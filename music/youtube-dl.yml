@@ -1,0 +1,14 @@
+- name: youtube-dl
+  hosts: 127.0.0.1
+  connection: local
+
+  tasks:
+      - name: install youtube-dl
+        pip:
+          name: youtube-dl
+          extra_args: --user
+
+      - name: install youtube-dl
+        pip:
+          name: youtube-dl
+          extra_args: --user --upgrade

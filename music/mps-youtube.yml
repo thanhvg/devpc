@@ -1,0 +1,14 @@
+- name: mps-youtube
+  hosts: 127.0.0.1
+  connection: local
+
+  tasks:
+      - name: install mps-youtube
+        pip:
+          name: mps-youtube
+          extra_args: --user
+
+      - name: install mps-youtube
+        pip:
+          name: mps-youtube
+          extra_args: --user --upgrade

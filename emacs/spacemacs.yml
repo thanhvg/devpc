@@ -1,0 +1,16 @@
+- name: Emacs
+  hosts: 127.0.0.1
+  connection: local
+
+  tasks:
+      - name: Download spacemacs
+        git:
+            repo: https://github.com/thanhvg/spacemacs
+            dest: ~/.emacs.d
+            version: prod
+
+      - name: Download spacemacs-eos
+        git:
+            repo: https://github.com/thanhvg/spacemacs-eos
+            dest: ~/.emacs.d/private/eos
+

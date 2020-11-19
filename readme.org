@@ -1,0 +1,15 @@
+#+startup:    content indent
+#+title: Ansible to set up ubuntu dev machine
+
+* install ansible
+#+begin_src sh
+sudo apt install ansible
+#+end_src
+
+* usage
+#+begin_src sh
+ansible-playbook -K <path-to-yaml-file>
+#+end_src
+
+* acknowledgement
+https://github.com/bradwilson/ansible-dev-pc
