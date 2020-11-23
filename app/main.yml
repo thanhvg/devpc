@@ -1,0 +1,19 @@
+- name: App
+  hosts: 127.0.0.1
+  connection: local
+
+  tasks:
+      - name: Install anki
+        become: yes
+        apt:
+            package: anki
+
+      - name: Install mpv
+        become: yes
+        apt:
+            package: mpv
+
+      - name: Install mplayer
+        become: yes
+        apt:
+            package: mplayer

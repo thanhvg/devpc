@@ -9,6 +9,7 @@ sudo apt install ansible
 * usage
 #+begin_src sh
 ansible-playbook -K <path-to-yaml-file>
+ansible-playbook -K music/*.yml
 #+end_src
 
 * acknowledgement
