@@ -1,0 +1,68 @@
+- name: ocr
+  hosts: 127.0.0.1
+  connection: local
+
+  vars:
+    create_bin: false
+
+  tasks:
+    - name: Create ~/bin
+      file:
+        path: ~/bin
+        state: directory
+        mode: 0700
+      when: create_bin
+
+    - name: Add ~/bin to PATH
+      lineinfile:
+        path: ~/.bashrc
+        line: export PATH=$PATH:~/bin
+      when: create_bin
+
+    # - name: install playbook requirements
+    #   become: true
+    #   package:
+    #     name:
+    #       - python3-psutil
+    #       - dconf
+    #       - dbus-tools
+    #       - dbus-daemon
+
+    - name: Install psutil Python package
+      become: yes
+      pip:
+        name: psutil
+
+    - name: install tesseract-ocr imagemagick scrot xsel
+      become: yes
+      apt:
+        name: "{{ packages }}"
+      vars:
+        packages:
+          - imagemagick
+          - xsel
+          - tesseract-ocr
+          - scrot
+          # - dconf
+          # - dbus-tools
+          # - dbus-daemon
+
+    - name: create file in ~/bin
+      copy:
+        src: gtenocr.sh
+        dest: ~/bin/gtenocr
+        mode: 0755
+
+    # dconf https://gist.github.com/carlwgeorge/c560a532b6929f49d9c0df52f75a68ae
+    - name: gtenocr shortcut name
+      dconf:
+        key: "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/name"
+        value: "'get text from screen'"
+    - name: gtenocr shortcut command
+      dconf:
+        key: "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/command"
+        value: "'gtenocr'"
+    - name: gtenocr shortcut binding
+      dconf:
+        key: "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/binding"
+        value: "'<Super>y'"
