@@ -4,18 +4,21 @@
 
   tasks:
 
-    - name: Add dbeaver APT package key
-      ansible.builtin.apt_repository:
-        repo: ppa:serge-rider/dbeaver-ce
-
-    - name: Update APT package list
+    - name: Add dbeaver ppa
       become: yes
-      apt:
+      apt_repository:
+        repo: ppa:serge-rider/dbeaver-ce
         update_cache: yes
-      when: apt_repository.changed
-      register: apt_update
-      retries: 5
-      until: apt_update is success
+        validate_certs: no
+
+    # - name: Update APT package list
+    #   become: yes
+    #   apt:
+    #     update_cache: yes
+    #   when: apt_repository.changed
+    #   register: apt_update
+    #   retries: 5
+    #   until: apt_update is success
 
     - name: Install dbeaver (Linux)
       become: yes
