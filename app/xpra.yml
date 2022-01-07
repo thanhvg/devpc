@@ -7,13 +7,13 @@
     - name: Add XPRA APT package key
       become: yes
       apt_key:
-        url: https://winswitch.org/gpg.asc
+        url: https://xpra.org/gpg.asc
 
     - name: Add XPRA APT package repository
       become: yes
       apt_repository:
         repo: deb http://winswitch.org/ {{ ansible_distribution_release }} main
-        filename: winswitch
+        filename: xpra
         update_cache: no
       register: apt_repository
 
