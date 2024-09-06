@@ -1,0 +1,57 @@
+- name: Install and build rdrview
+  hosts: all
+  become: yes
+  tasks:
+    - name: Install dependencies for Debian/Ubuntu
+      apt:
+        name:
+          - libxml2-dev
+          - libseccomp-dev
+          - libcurl4-gnutls-dev
+          - lynx
+        state: present
+      when: ansible_os_family == "Debian"
+
+    - name: Install dependencies for Fedora
+      dnf:
+        name:
+          - libcurl-devel
+          - libxml2-devel
+          - libseccomp-devel
+          - lynx
+        state: present
+      when: ansible_os_family == "RedHat"
+
+    - name: Create directory for git repository
+      file:
+        path: "{{ ansible_env.HOME }}/git/rdrview"
+        state: directory
+
+    - name: Clone the rdrview repository
+      git:
+        repo: 'https://github.com/eafer/rdrview.git'
+        dest: '{{ ansible_env.HOME }}/git/rdrview'
+        update: yes
+
+    - name: Build rdrview
+      command: make
+      args:
+        chdir: '{{ ansible_env.HOME }}/git/rdrview'
+      register: make_output
+
+    - name: Display make output
+      debug:
+        var: make_output.stdout_lines
+
+    - name: Install rdrview to ~/bin
+      command: make install
+      args:
+        chdir: '{{ ansible_env.HOME }}/git/rdrview'
+      when: make_output.rc == 0
+
+    - name: Copy rdrview to ~/bin
+      copy:
+        src: '{{ ansible_env.HOME }}/git/rdrview/rdrview'
+        dest: '{{ ansible_env.HOME }}/bin/rdrview'
+        mode: '0755'
+      when: make_output.rc == 0
