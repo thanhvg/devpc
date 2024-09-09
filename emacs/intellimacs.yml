@@ -1,0 +1,22 @@
+- name: Emacs
+  hosts: 127.0.0.1
+  connection: local
+
+  tasks:
+      - name: Download intellimacs
+        git:
+            repo: https://github.com/MarcoIeni/intellimacs
+            dest: ~/.intellimacs
+
+      - name: Download spacemacs-eos
+        git:
+            repo: https://github.com/thanhvg/spacemacs-eos
+            dest: ~/.emacs.d/private/eos
+
+      - name: Copy .ideavimrc content from a separate file
+        copy:
+          src: intellimacs_vimrc
+          dest: "{{ ansible_env.HOME }}/.ideavimrc"
+          owner: "{{ ansible_env.USER }}"
+          group: "{{ ansible_env.USER }}"
+          mode: '0644'
