@@ -1,6 +1,6 @@
 - name: Install and build rdrview
-  hosts: all
-  become: yes
+  hosts: 127.0.0.1
+
   tasks:
     - name: Install dependencies for Debian/Ubuntu
       apt:
@@ -11,6 +11,7 @@
           - lynx
         state: present
       when: ansible_os_family == "Debian"
+      become: yes # will run as root/sudo pass -K to ansb
 
     - name: Install dependencies for Fedora
       dnf:
@@ -21,6 +22,7 @@
           - lynx
         state: present
       when: ansible_os_family == "RedHat"
+      become: yes
 
     - name: Create directory for git repository
       file:
@@ -43,11 +45,11 @@
       debug:
         var: make_output.stdout_lines
 
-    - name: Install rdrview to ~/bin
-      command: make install
-      args:
-        chdir: '{{ ansible_env.HOME }}/git/rdrview'
-      when: make_output.rc == 0
+    # - name: Install rdrview to ~/bin
+    #   command: make install
+    #   args:
+    #     chdir: '{{ ansible_env.HOME }}/git/rdrview'
+    #   when: make_output.rc == 0
 
     - name: Copy rdrview to ~/bin
       copy:
