@@ -1,0 +1,40 @@
+- name: Update shell configuration to source vte.sh
+  hosts: localhost
+  tasks:
+    - name: Determine the user's shell
+      command: echo $SHELL
+      register: user_shell
+
+    - name: Set the shell configuration file path for bash
+      set_fact:
+        shell_config_file: "{{ ansible_env.HOME }}/.bashrc"
+      when: user_shell.stdout.endswith('bash')
+
+    - name: Set the shell configuration file path for zsh
+      set_fact:
+        shell_config_file: "{{ ansible_env.HOME }}/.zshrc"
+      when: user_shell.stdout.endswith('zsh')
+
+    - name: Ensure the vte.sh sourcing line is present in the shell config
+      lineinfile:
+        path: "{{ shell_config_file }}"
+        line: |
+          if [ $TILIX_ID ] || [ $VTE_VERSION ]; then
+              source /etc/profile.d/vte.sh
+          fi
+        state: present
+        create: yes
+        insertafter: EOF
+
+    - name: Check if the symlink /etc/profile.d/vte.sh exists
+      stat:
+        path: /etc/profile.d/vte.sh
+      register: vte_symlink
+
+    - name: Ensure the symlink /etc/profile.d/vte.sh exists
+      become: yes
+      file:
+        src: /etc/profile.d/vte-2.91.sh
+        dest: /etc/profile.d/vte.sh
+        state: link
+      when: not vte_symlink.stat.exists
