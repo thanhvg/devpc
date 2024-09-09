@@ -3,9 +3,15 @@
   connection: local
 
   tasks:
+      - name: Ensure fonts directory exists
+        file:
+          path: ~/.local/share/fonts
+          state: directory
+          mode: '0755'
+
       - name: Get Jetbrain mono fonts
         unarchive:
-            src: https://download.jetbrains.com/fonts/JetBrainsMono-2.225.zip
+            src: https://download.jetbrains.com/fonts/JetBrainsMono-2.304.zip
             dest: ~/.local/share/fonts
             remote_src: yes
         register: fonts_downloaded
