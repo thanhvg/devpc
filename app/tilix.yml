@@ -38,3 +38,19 @@
         dest: /etc/profile.d/vte.sh
         state: link
       when: not vte_symlink.stat.exists
+
+    # - name: tilix shortcut name
+    #   dconf:
+    #     key: "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1/name"
+    #     value: "'run tilix'"
+    # - name: tilix shortcut command
+    #   dconf:
+    #     key: "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1/command"
+    #     value: "'tilix'"
+    # - name: tilix shortcut binding
+    #   dconf:
+    #     key: "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1/binding"
+    #     value: "'<Super>t'"
+
+    # TODO finish the declaration for gnome
+
