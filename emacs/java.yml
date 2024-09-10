@@ -1,0 +1,36 @@
+- name: Download and set up JDT Language Server
+  hosts: localhost
+  tasks:
+    - name: Ensure the target directory exists
+      file:
+        path: ~/jdtls
+        state: directory
+
+    - name: Download and extract JDT Language Server
+      unarchive:
+        src: "https://www.eclipse.org/downloads/download.php?file=/jdtls/milestones/1.39.0/jdt-language-server-1.39.0-202408291433.tar.gz"
+        dest: ~/jdtls
+        remote_src: yes
+
+    - name: Create symlink for jdtls
+      file:
+        src: ~/jdtls/bin/jdtls
+        dest: ~/bin/jdtls
+        state: link
+
+- name: Download JAR files
+  hosts: localhost
+  tasks:
+    - name: Ensure jars directory exists
+      file:
+        path: ~/jars
+        state: directory
+    - name: Download PlantUML JAR
+      get_url:
+        url: https://github.com/plantuml/plantuml/releases/download/v1.2024.7/plantuml-1.2024.7.jar
+        dest: ~/plantuml.jar
+
+    - name: Download Lombok JAR
+      get_url:
+        url: https://projectlombok.org/downloads/lombok.jar
+        dest: ~/jars/lombok.jar
