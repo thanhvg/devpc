@@ -29,9 +29,9 @@
     #       - dbus-daemon
 
     - name: Install psutil Python package
-      become: yes
       pip:
         name: psutil
+        extra_args: --user
 
     - name: install tesseract-ocr imagemagick scrot xsel
       become: yes
