@@ -1,0 +1,7 @@
+- name: Install NVM
+  hosts: localhost
+  tasks:
+    - name: Install NVM using curl
+      shell: curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash
+      args:
+        executable: /bin/bash
