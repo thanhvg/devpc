@@ -1,0 +1,47 @@
+- name: Install dict and related packages on Debian/Ubuntu
+  hosts: 127.0.0.1
+  become: yes
+  tasks:
+    - name: Install dictd and related packages
+      apt:
+        name:
+          - dictd
+          - dict
+          - dict-wn
+          - dict-vera
+          - dict-jargon
+          - dict-devil
+          - dict-gcide
+          - dict-foldoc
+        state: present
+        update_cache: yes
+
+    - name: Attempt to install dict-moby-thesaurus
+      apt:
+        name: dict-moby-thesaurus
+        state: present
+      register: dict_moby_thesaurus_install
+      ignore_errors: yes
+
+    - name: Download dict-moby-thesaurus if not installed
+      get_url:
+        url: http://ftp.debian.org/debian/pool/main/d/dict-moby-thesaurus/dict-moby-thesaurus_1.0-6.4_all.deb
+        dest: /tmp/dict-moby-thesaurus.deb
+      when: dict_moby_thesaurus_install.changed == false
+
+    - name: Install dict-moby-thesaurus from downloaded .deb
+      apt:
+        deb: /tmp/dict-moby-thesaurus.deb
+      when: dict_moby_thesaurus_install.changed == false
+
+    - name: Clean up downloaded .deb file
+      file:
+        path: /tmp/dict-moby-thesaurus.deb
+        state: absent
+      when: dict_moby_thesaurus_install.changed == false
+
+    - name: Enable dictd service
+      systemd:
+        name: dictd
+        enabled: yes
+        state: started

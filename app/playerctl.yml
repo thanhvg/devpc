@@ -1,0 +1,52 @@
+- name: playerctl
+  hosts: 127.0.0.1
+  connection: local
+
+  tasks:
+    - name: install playbook requirements
+      become: true
+      package:
+        name:
+          - python3-psutil
+      when: false
+
+    - name: Install
+      become: yes
+      apt:
+        package: playerctl
+      when: false
+
+    - name: deconf
+      dconf:
+        key: "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings"
+        state: read
+      register: custom_keybindings
+
+    - name: Shout out
+      debug:
+        var: custom_keybindings
+
+
+    - name: Shout out 2
+      debug:
+        var: custom_keybindings.value
+
+    - name: Concatenate strings using +
+      set_fact:
+        part1: "Hello"
+        part2: "World"
+        append_this: ", '/org/foo']"
+        # concatenated_string: "{{ part1 + ' ' + part2 }}"
+
+    - name: Concatenate strings using +
+      set_fact:
+        concatenated_string_plus: "{{ part1 + ' ' + part2 }}"
+
+    - name: Append to custom keybindings
+      set_fact:
+        # custom_keybindings_value: "{{ custom_keybindings.value[:-1] + append_this }}"
+        custom_keybindings_value: "{{['/org/foo'] +  custom_keybindings.value}}"
+
+    - name: Show the updated custom keybindings
+      debug:
+        var: custom_keybindings_value
