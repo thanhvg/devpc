@@ -14,3 +14,44 @@
             repo: https://github.com/thanhvg/spacemacs-eos
             dest: ~/.emacs.d/private/eos
 
+      # tramp
+      - name: Ensure the block is present in .bashrc
+        blockinfile:
+          path: ~/.bashrc
+          block: |
+            if [[ "$TERM" == "dumb" ]]; then
+              unset zle_bracketed_paste
+              unset zle
+              PS1='$ '
+              return
+            fi
+        when: ansible_user_id is defined
+         
+        # vterm
+      - name: Ensure the vterm_printf function is present in .bashrc
+        blockinfile:
+          path: ~/.bashrc
+          block: |
+            vterm_printf() {
+                if [ -n "$TMUX" ] && ([ "${TERM%%-*}" = "tmux" ] || [ "${TERM%%-*}" = "screen" ]); then
+                    # Tell tmux to pass the escape sequences through
+                    printf "\ePtmux;\e\e]%s\007\e\\" "$1"
+                elif [ "${TERM%%-*}" = "screen" ]; then
+                    # GNU screen (screen, screen-256color, screen-256color-bce)
+                    printf "\eP\e]%s\007\e\\" "$1"
+                else
+                    printf "\e]%s\e\\" "$1"
+                fi
+            }
+
+            vterm_prompt_end(){
+                vterm_printf "51;A$(whoami)@$(hostname):$(pwd)"
+            }
+            PS1=$PS1'\[$(vterm_prompt_end)\]'
+
+            if [[ "$INSIDE_EMACS" = 'vterm' ]] \
+                && [[ -n ${EMACS_VTERM_PATH} ]] \
+                && [[ -f ${EMACS_VTERM_PATH}/etc/emacs-vterm-bash.sh ]]; then
+              source ${EMACS_VTERM_PATH}/etc/emacs-vterm-bash.sh
+            fi
+        when: ansible_user_id is defined
