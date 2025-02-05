@@ -9,6 +9,13 @@
           state: directory
           mode: '0755'
 
+      - name: Get JetBrains Nerd Fonts
+        unarchive:
+            src: https://github.com/ryanoasis/nerd-fonts/releases/download/v3.3.0/JetBrainsMono.zip
+            dest: ~/.local/share/fonts
+            remote_src: yes
+        register: fonts_downloaded
+
       - name: Get Jetbrain mono fonts
         unarchive:
             src: https://download.jetbrains.com/fonts/JetBrainsMono-2.304.zip
