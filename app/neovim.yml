@@ -1,26 +1,27 @@
 - name: Set up Neovim and LazyVim
   hosts: localhost
-  become: yes
   tasks:
-    - name: Download Neovim
+    - name: Download Neovim stable
       get_url:
-        url: "https://github.com/neovim/neovim/releases/latest/download/nvim-linux64.tar.gz"
-        dest: "/tmp/nvim-linux64.tar.gz"
+        url: "https://github.com/neovim/neovim/releases/download/stable/nvim-linux-x86_64.tar.gz"
+        dest: "/tmp/nvim.tar.gz"
 
     - name: Remove existing Neovim installation
+      become: yes
       command: rm -rf /opt/nvim
       ignore_errors: yes
 
     - name: Extract Neovim
+      become: yes
       unarchive:
-        src: "/tmp/nvim-linux64.tar.gz"
+        src: "/tmp/nvim.tar.gz"
         dest: "/opt"
         remote_src: yes
 
     - name: Add Neovim to PATH
       lineinfile:
         path: "~/.bashrc"  # Change this to ~/.bash_profile or ~/.zshrc if needed
-        line: 'export PATH="$PATH:/opt/nvim-linux64/bin"'
+        line: 'export PATH="$PATH:/opt/nvim-linux-x86_64/bin"'
         state: present
 
     - name: Backup existing Neovim configuration
@@ -50,5 +51,5 @@
 
     - name: Clean up temporary files
       file:
-        path: "/tmp/nvim-linux64.tar.gz"
+        path: "/tmp/nvim.tar.gz"
         state: absent
