@@ -1,0 +1,54 @@
+- name: Set up Neovim and LazyVim
+  hosts: localhost
+  become: yes
+  tasks:
+    - name: Download Neovim
+      get_url:
+        url: "https://github.com/neovim/neovim/releases/latest/download/nvim-linux64.tar.gz"
+        dest: "/tmp/nvim-linux64.tar.gz"
+
+    - name: Remove existing Neovim installation
+      command: rm -rf /opt/nvim
+      ignore_errors: yes
+
+    - name: Extract Neovim
+      unarchive:
+        src: "/tmp/nvim-linux64.tar.gz"
+        dest: "/opt"
+        remote_src: yes
+
+    - name: Add Neovim to PATH
+      lineinfile:
+        path: "~/.bashrc"  # Change this to ~/.bash_profile or ~/.zshrc if needed
+        line: 'export PATH="$PATH:/opt/nvim-linux64/bin"'
+        state: present
+
+    - name: Backup existing Neovim configuration
+      command: mv ~/.config/nvim{,.bak}
+      ignore_errors: yes
+
+    - name: Backup optional Neovim directories
+      block:
+        - command: mv ~/.local/share/nvim{,.bak}
+          ignore_errors: yes
+        - command: mv ~/.local/state/nvim{,.bak}
+          ignore_errors: yes
+        - command: mv ~/.cache/nvim{,.bak}
+          ignore_errors: yes
+
+    - name: Clone LazyVim starter
+      git:
+        repo: "https://github.com/LazyVim/starter"
+        dest: "~/.config/nvim"
+        force: yes
+
+    - name: Remove .git folder from LazyVim starter
+      when: false # disable for now
+      command: rm -rf ~/.config/nvim/.git
+      args:
+        removes: "~/.config/nvim/.git"
+
+    - name: Clean up temporary files
+      file:
+        path: "/tmp/nvim-linux64.tar.gz"
+        state: absent
