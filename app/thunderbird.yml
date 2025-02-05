@@ -1,0 +1,55 @@
+
+- name: Install Thunderbird from DEB and disable snap
+  hosts: localhost
+  become: yes
+  tasks:
+    - name: Check if Thunderbird snap is installed
+      command: snap list thunderbird
+      register: snap_installed
+      ignore_errors: yes
+
+    - name: Remove Thunderbird snap if installed
+      command: snap remove --purge thunderbird
+      when: snap_installed.rc == 0
+
+    - name: Remove Thunderbird DEB if installed
+      apt:
+        name: thunderbird
+        state: absent
+      when: snap_installed.rc == 0
+
+    - name: Add Mozilla Team PPA
+      apt_repository:
+        repo: ppa:mozillateam/ppa
+        state: present
+
+    - name: Create pinning file for Mozilla Team PPA
+      copy:
+        dest: /etc/apt/preferences.d/mozillateamppa
+        content: |
+          Package: thunderbird*
+          Pin: release o=LP-PPA-mozillateam
+          Pin-Priority: 1001
+
+          Package: thunderbird*
+          Pin: release o=Ubuntu
+          Pin-Priority: -1
+
+    - name: Update apt package list
+      apt:
+        update_cache: yes
+
+    - name: Install Thunderbird from Mozilla Team PPA
+      apt:
+        name: thunderbird
+        state: present
+
+    - name: Disable unattended upgrades for Thunderbird
+      lineinfile:
+        path: /etc/apt/apt.conf.d/51unattended-upgrades-thunderbird
+        line: 'Unattended-Upgrade::Allowed-Origins:: "LP-PPA-mozillateam:${distro_codename}";'
+        create: yes
+        state: present
+
+    # - name: Ensure unattended upgrades is configured
+    #   command: dpkg-reconfigure -f noninteractive unattended-upgrades
