@@ -1,0 +1,36 @@
+- name: Install difftastic
+  hosts: localhost
+  tasks:
+    - name: Download difftastic
+      get_url:
+        url: "https://github.com/Wilfred/difftastic/releases/download/0.63.0/difft-x86_64-unknown-linux-gnu.tar.gz"
+        dest: "/tmp/difft.tar.gz"
+
+    - name: Create ~/.local/bin directory if it doesn't exist
+      file:
+        path: "~/.local/bin"
+        state: directory
+        mode: '0755'
+
+    - name: Extract difftastic
+      unarchive:
+        src: "/tmp/difft.tar.gz"
+        dest: "/tmp"
+
+    - name: Move difft to ~/.local/bin
+      command: mv /tmp/difft ~/.local/bin/difft
+      args:
+        creates: "~/.local/bin/difft"
+
+    - name: Make difft executable
+      file:
+        path: "~/.local/bin/difft"
+        mode: '0755'
+
+    - name: Clean up temporary files
+      file:
+        path: "/tmp/difft.tar.gz"
+        state: absent
+    - file:
+        path: "/tmp/difft"
+        state: absent
