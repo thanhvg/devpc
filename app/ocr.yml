@@ -56,13 +56,13 @@
     # dconf https://gist.github.com/carlwgeorge/c560a532b6929f49d9c0df52f75a68ae
     - name: gtenocr shortcut name
       dconf:
-        key: "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/name"
+        key: "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom20/name"
         value: "'get text from screen'"
     - name: gtenocr shortcut command
       dconf:
-        key: "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/command"
+        key: "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom20/command"
         value: "'gtenocr'"
     - name: gtenocr shortcut binding
       dconf:
-        key: "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/binding"
+        key: "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom20/binding"
         value: "'<Super>y'"
